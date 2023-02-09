@@ -3,6 +3,9 @@
  * Import ethereum-cryptography/keccak
  * Import ethereum-cryptography/utils hexToBytes toHex
  */
+import * as secp from "ethereum-cryptography/secp256k1";
+import { keccak256 } from "ethereum-cryptography/keccak";
+import { hexToBytes, toHex } from "ethereum-cryptography/utils";
 
 /**
  * Create a simulated MetaMask wallet that
@@ -12,6 +15,7 @@
  */
 
 // Map of accounts and keys
+const ACCOUNT_KEYS = new Map();
 
 /**
  * Create a new account
@@ -20,26 +24,55 @@
  * derive an account as an address starting with '0x'
  * set an account and its keys within the map of accounts
  */
+const newAccount = () => {
+
+    const privateKey = secp.utils.randomPrivateKey();
+    console.log(privateKey);
+    const publicKey = secp.getPublicKey(privateKey);
+    console.log(publicKey);
+    const address = toHex(keccak256(publicKey.slice(1).slice(-20)));
+    console.log("0x" + address.toString());
+
+    ACCOUNT_KEYS.set("0x" + address.toString(), {private: privateKey, public: publicKey});
+}
 
 // List of accounts as addresses starting with '0x'
+const ACCOUNTS = Array.from(ACCOUNT_KEYS.keys());
 
 // Get the account private key from map of accounts
+const getPrivateKey = (account) => {
+    if(!account) return null
+    return hexToBytes(ACCOUNT_KEYS.get(account).private);
+}
 
 // Get the account public key in hex format from map of accounts
+const getPublicKey = (account) => {
+    if(!account) return null
+    return hexToBytes(ACCOUNT_KEYS.get(account).public);
+}
+
+/**
+ * Get the public key of an user in hexa format.
+ * @param user the user.
+ * @returns the public key.
+ */
+const getHexPubKey = (account) => {
+    if (!user) return null;
+    return toHex(getPublicKey(account));
+  };
 
 // Get the address in hex format without '0x' from the account public key
-
-// Generate a random private key
-
-// Derive a public key from a private key
-
-// Derive an address without '0x' from a public key
+const getAddress = (account) => {
+    if(!account) return null
+    return toHex(keccak256(getPublicKey(account).slice(1)).slice(-20));
+}
 
 /**
  * Hash a message using KECCAK-256 
  * @param message message to hash
  * @returns the hash of the message
 */
+const hashMessage = (message) => keccak256(Uint8Array.from(message));
 
 /**
  * Sign a message
@@ -47,6 +80,17 @@
  * @param message message to sign
  * @returns signature in hex format with recovery bit as first byte
  */
+
+const sign = async (account, message) => {
+    const privateKey = getPrivateKey(account);
+    const hash = hashMessage(message);
+  
+    const [signature, recoveryBit] = await secp.sign(hash, privateKey, {
+      recovered: true,
+    });
+    const fullSignature = new Uint8Array([recoveryBit, ...signature]);
+    return toHex(fullSignature);
+  }
 
 // 
 /**
@@ -57,3 +101,11 @@
  * function to get account address
  * function to get account public key in hex format
  */
+const wallet = {
+    ACCOUNTS,
+    newAccount,
+    sign,
+    getAddress,
+    getHexPubKey,
+  };
+  export default wallet;
