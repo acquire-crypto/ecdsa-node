@@ -7,15 +7,18 @@ const port = 3042;
 app.use(cors());
 app.use(express.json());
 
-const balances = {
-  "0x1": 100,
-  "0x2": 50,
-  "0x3": 75,
-};
+const balances = new Map();
 
-app.get("/balance/:address", (req, res) => {
-  const { address } = req.params;
-  const balance = balances[address] || 0;
+app.post("/deposit", (req, res) => {
+  const { account, balance } = req.body;
+  balances.set(account, balance);
+  console.log(balances);
+
+});
+
+app.get("/balance/:account", (req, res) => {
+  const { account } = req.params;
+  const balance = balances.get(account) || 0;
   res.send({ balance });
 });
 
@@ -25,12 +28,12 @@ app.post("/send", (req, res) => {
   setInitialBalance(sender);
   setInitialBalance(recipient);
 
-  if (balances[sender] < amount) {
+  if (balances.get(sender) < amount) {
     res.status(400).send({ message: "Not enough funds!" });
   } else {
-    balances[sender] -= amount;
-    balances[recipient] += amount;
-    res.send({ balance: balances[sender] });
+    balances.set(sender, balances.get(sender) - amount);
+    balances.set(recipient, balances.get(recipient) + amount);
+    res.send({ balance: balances.get(sender) });
   }
 });
 

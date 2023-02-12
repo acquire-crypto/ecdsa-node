@@ -12,11 +12,11 @@ function Wallet({ account, setAccount, balance, setBalance }) {
 
   async function onSelectAccount(evt) {
     const selectedAccount = evt.target.value;
-    setAccount(selectedAccount);
+    //setValue(selectedAccount);
     if (selectedAccount) {
       const {
         data: { balance },
-      } = await server.get(`balance/${address}`);
+      } = await server.get(`balance/${selectedAccount}`);
       setBalance(balance);
     } else {
       setBalance(0);
@@ -36,16 +36,28 @@ function Wallet({ account, setAccount, balance, setBalance }) {
 
     // Pull the new account from last position in array of accounts
     const newAccount = wallet.ACCOUNTS.at(-1);
-    console.log(wallet.ACCOUNTS);
     
+    let newDeposit = parseInt(deposit);
+
+    // Package the new account and deposit payload
     const addAccount = {
         account: newAccount, 
-        balance: parseInt(deposit)
+        balance: newDeposit,
       };
+    console.log(addAccount);
 
+    // Reset deposit to 0
     setDeposit(0);
 
-    // TODO: Package the new account and deposit payload
+    try {
+      const {
+        data: { balance },
+      } = await server.post(`deposit`, addAccount);
+      setBalance(balance);
+    } catch (ex) {
+      alert(ex);
+    }
+
 
   }
 
@@ -63,7 +75,6 @@ function Wallet({ account, setAccount, balance, setBalance }) {
               </option>
             ))}
           </select>
-        <div className="balance">Account: {wallet.getAddress(account)}</div>
         <div className="balance">Balance: {balance}</div>
       </div>
 
