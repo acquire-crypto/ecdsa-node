@@ -17,6 +17,9 @@ import { hexToBytes, toHex } from "ethereum-cryptography/utils";
 // Map of accounts and keys
 const ACCOUNT_KEYS = new Map();
 
+// List of accounts as addresses starting with '0x'
+const ACCOUNTS = new Array();
+
 /**
  * Create a new account
  * generate a random private key
@@ -27,17 +30,16 @@ const ACCOUNT_KEYS = new Map();
 const newAccount = () => {
 
     const privateKey = secp.utils.randomPrivateKey();
-    console.log(privateKey);
+    //console.log(privateKey);
     const publicKey = secp.getPublicKey(privateKey);
-    console.log(publicKey);
+    //console.log(publicKey);
     const address = toHex(keccak256(publicKey.slice(1).slice(-20)));
-    console.log("0x" + address.toString());
+    //console.log(address);
+    const account = "0x" + address.toString();
 
-    ACCOUNT_KEYS.set("0x" + address.toString(), {private: privateKey, public: publicKey});
+    ACCOUNT_KEYS.set(account, {private: privateKey, public: publicKey});
+    ACCOUNTS.push(account);
 }
-
-// List of accounts as addresses starting with '0x'
-const ACCOUNTS = Array.from(ACCOUNT_KEYS.keys());
 
 // Get the account private key from map of accounts
 const getPrivateKey = (account) => {

@@ -24,10 +24,30 @@ function Wallet({ account, setAccount, balance, setBalance }) {
   }
 
   /**
-   * TODO: Add async function to create new account
+   * Function to generate new account
    * Create a new account to map of accounts
    * Post the address and starting balance to the server
    */
+  async function onGenerate(evt){
+    evt.preventDefault();
+
+    // Generate a new Account and its keys
+    wallet.newAccount();
+
+    // Pull the new account from last position in array of accounts
+    const newAccount = wallet.ACCOUNTS.at(-1);
+    console.log(wallet.ACCOUNTS);
+    
+    const addAccount = {
+        account: newAccount, 
+        balance: parseInt(deposit)
+      };
+
+    setDeposit(0);
+
+    // TODO: Package the new account and deposit payload
+
+  }
 
   return (
     // Select account option or create new wallet with starting balance
@@ -47,12 +67,14 @@ function Wallet({ account, setAccount, balance, setBalance }) {
         <div className="balance">Balance: {balance}</div>
       </div>
 
-      <form className="transfer">
+      <form className="transfer" onSubmit={onGenerate}>
         <h1>Create Account</h1>
+        <label> Starting Balance
           <input placeholder="Enter initial deposit"
           value={deposit} 
           onChange={setValue(setDeposit)}></input>
           <input type="submit" className="button" value="Generate"></input>
+        </label>
       </form>
     </div>
     
