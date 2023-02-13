@@ -32,12 +32,12 @@ const newAccount = () => {
     const privateKey = secp.utils.randomPrivateKey();
     //console.log(privateKey);
     const publicKey = secp.getPublicKey(privateKey);
-    //console.log(publicKey);
+    console.log(publicKey);
     const address = toHex(keccak256(publicKey.slice(1).slice(-20)));
     //console.log(address);
     const account = "0x" + address.toString();
 
-    ACCOUNT_KEYS.set(account, {private: privateKey, public: publicKey});
+    ACCOUNT_KEYS.set(account, {private: toHex(privateKey), public: toHex(publicKey)});
     ACCOUNTS.push(account);
 }
 
@@ -51,23 +51,18 @@ const getPrivateKey = (account) => {
 const getPublicKey = (account) => {
     if(!account) return null
     return hexToBytes(ACCOUNT_KEYS.get(account).public);
+    
 }
 
 /**
- * Get the public key of an user in hexa format.
- * @param user the user.
+ * Get the public key of an acount in hexa format.
+ * @param account the account.
  * @returns the public key.
  */
 const getHexPubKey = (account) => {
-    if (!user) return null;
+    if (!account) return null;
     return toHex(getPublicKey(account));
   };
-
-// Get the address in hex format without '0x' from the account public key
-const getAddress = (account) => {
-    if(!account) return null
-    return toHex(keccak256(getPublicKey(account).slice(1)).slice(-20));
-}
 
 /**
  * Hash a message using KECCAK-256 
@@ -107,7 +102,6 @@ const wallet = {
     ACCOUNTS,
     newAccount,
     sign,
-    getAddress,
     getHexPubKey,
   };
   export default wallet;

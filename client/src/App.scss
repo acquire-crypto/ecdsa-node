@@ -9,7 +9,7 @@ label {
   display: flex;
   flex-direction: column;
   letter-spacing: 0.05rem;
-  font-size: .8em;
+  font-size: 0.9em;
   font-weight: 400;
   color: #222;
 }
@@ -41,6 +41,15 @@ label {
 }
 
 input {
+  padding: 10px 0;
+  border-radius: 0.125rem;
+  border: 1px solid rgb(226, 232, 240);
+  background-color: #fdfdfe;
+  padding-inline-start: 0.75rem;
+  font-size: 0.875rem;
+}
+
+select {
   padding: 10px 0;
   border-radius: 0.125rem;
   border: 1px solid rgb(226, 232, 240);

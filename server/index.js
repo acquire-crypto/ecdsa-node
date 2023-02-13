@@ -1,8 +1,8 @@
-
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const port = 3042;
+const crypto = require("./crypto");
 
 app.use(cors());
 app.use(express.json());
@@ -12,7 +12,6 @@ const balances = new Map();
 app.post("/deposit", (req, res) => {
   const { account, balance } = req.body;
   balances.set(account, balance);
-  console.log(balances);
 
 });
 
@@ -20,17 +19,22 @@ app.get("/balance/:account", (req, res) => {
   const { account } = req.params;
   const balance = balances.get(account) || 0;
   res.send({ balance });
-  console.log(balance);
 });
 
 app.post("/send", (req, res) => {
-  const { sender, amount, recipient } = req.body;
+  const { message, signature } = req.body;
+  const { recipient, amount } = message;
+
+
+  // Get public key and sender
+  const pubKey = crypto.signatureToPubKey(message, signature);
+  console.log(pubKey);
+  const sender = crypto.pubKeyToAccount(pubKey);
+  console.log(sender);
+
 
   setInitialBalance(sender);
   setInitialBalance(recipient);
-  
-  console.log(sender);
-  console.log(recipient);
   
   if (balances.get(sender) < amount) {
     res.status(400).send({ message: "Not enough funds!" });

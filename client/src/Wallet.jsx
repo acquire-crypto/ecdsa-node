@@ -46,7 +46,6 @@ function Wallet({ account, setAccount, balance, setBalance }) {
         account: newAccount, 
         balance: newDeposit,
       };
-    console.log(addAccount);
 
     // Reset deposit to 0
     setDeposit(0);
@@ -81,8 +80,7 @@ function Wallet({ account, setAccount, balance, setBalance }) {
       </div>
 
       <form className="transfer" onSubmit={onGenerate}>
-        <h1>Create Account</h1>
-        <label> Starting Balance
+        <label> Create Account
           <input placeholder="Enter initial deposit"
           value={deposit} 
           onChange={setValue(setDeposit)}></input>

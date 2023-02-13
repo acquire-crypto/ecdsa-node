@@ -12,17 +12,23 @@ function Transfer({ account, setBalance }) {
     evt.preventDefault();
 
     const message = {
-      sender: account,
       amount: parseInt(sendAmount),
       recipient,
     };
 
-    console.log(message);
+    const signature = await wallet.sign(account, message);
+
+    const transaction = {
+      message,
+      signature
+    };
+
+    console.log(transaction);
 
     try {
       const {
         data: { balance },
-      } = await server.post(`send`, message);
+      } = await server.post(`send`, transaction);
       setBalance(balance);
 
     } catch (ex) {
