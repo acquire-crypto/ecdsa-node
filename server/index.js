@@ -20,14 +20,18 @@ app.get("/balance/:account", (req, res) => {
   const { account } = req.params;
   const balance = balances.get(account) || 0;
   res.send({ balance });
+  console.log(balance);
 });
 
 app.post("/send", (req, res) => {
-  const { sender, recipient, amount } = req.body;
+  const { sender, amount, recipient } = req.body;
 
   setInitialBalance(sender);
   setInitialBalance(recipient);
-
+  
+  console.log(sender);
+  console.log(recipient);
+  
   if (balances.get(sender) < amount) {
     res.status(400).send({ message: "Not enough funds!" });
   } else {
@@ -41,8 +45,8 @@ app.listen(port, () => {
   console.log(`Listening on port ${port}!`);
 });
 
-function setInitialBalance(address) {
-  if (!balances[address]) {
-    balances[address] = 0;
+function setInitialBalance(account) {
+  if (!balances[account]) {
+    balances[account] = 0;
   }
 }

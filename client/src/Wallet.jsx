@@ -1,7 +1,7 @@
 import server from "./server";
-// TODO: import wallet of accounts from MetaMask
+// import wallet of accounts from MetaMask
 import wallet from "./MetaMask";
-// TODO: import UseState from react
+// import UseState from react
 import { useState } from "react";
 
 function Wallet({ account, setAccount, balance, setBalance }) {
@@ -11,12 +11,14 @@ function Wallet({ account, setAccount, balance, setBalance }) {
   const setValue = (setter) => (evt) => setter(evt.target.value);
 
   async function onSelectAccount(evt) {
-    const selectedAccount = evt.target.value;
-    //setValue(selectedAccount);
-    if (selectedAccount) {
+    
+    const account = evt.target.value;
+    setAccount(account);
+
+    if (account) {
       const {
         data: { balance },
-      } = await server.get(`balance/${selectedAccount}`);
+      } = await server.get(`balance/${account}`);
       setBalance(balance);
     } else {
       setBalance(0);
